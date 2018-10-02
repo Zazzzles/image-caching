@@ -1,7 +1,5 @@
 # Image caching for React Native with Expo
 
-## Introduction
-
 > A  nifty wrapper for `Image` and `ImageBackround` used for caching remote images to prevent unnecessary network requests.
 
 ## Code Samples
