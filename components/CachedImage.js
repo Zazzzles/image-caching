@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { View, Image, ActivityIndicator } from 'react-native';
+import { View, Image, ActivityIndicator, Animated } from 'react-native';
 import PropTypes from 'prop-types'
 import storage from '../helpers/AsyncLib'
 import { FileSystem } from 'expo'
+import CacheManger from '../components/CacheManager'
 
-const CACHE_FOLDER = `${FileSystem.documentDirectory}image-cache`
 
 export default class CachedImage extends Component {
  
@@ -12,31 +12,34 @@ export default class CachedImage extends Component {
     super(props)
     this.state = {
       loaded: false,
-      cachedb64: ""
+      cachedb64: "",
+      opacity: new Animated.Value(0),
+      loaderOpactiy: new Animated.Value(1)
     }
   }
- 
 
   componentWillMount = () =>{
     const { source } = this.props
     //storage.remove(source)
     storage.get(source).then(res => res ? this.loadItem(res) : this.storeItem(source))
+   
   }
 
   storeItem = async (source) =>{
-    const dir = await this.getCacheDir()
-    const id = this.guid()
-    let b46 = await this.fetchB64(source)
+    const dir = await CacheManger.getCacheDir()
+    const id = CacheManger.guid()
+    let b46 = await CacheManger.fetchB64(source)
     FileSystem.writeAsStringAsync(dir.uri + id, b46).then((res) =>{
+      this.fadeOut(() =>{
         this.setState({
           loaded: true,
           cachedb64: b46
         }, () => {
-          storage.set(source, {
-            uri: dir.uri + id,
-            dateCreated: new Date()
-          })
+          this.fadeIn()
+          CacheManger.storeImageMeta(source, dir.uri + id)
         })
+      })
+       
     }).catch(error => {
       console.error(error);
     });
@@ -44,64 +47,49 @@ export default class CachedImage extends Component {
 
   loadItem = async(meta) => {   
     Expo.FileSystem.readAsStringAsync(meta.uri).then(resp => {
-      this.setState({
-        loaded: true,
-        cachedb64: resp
+      this.fadeOut(() =>{
+        this.setState({
+          loaded: true,
+          cachedb64: resp
+        }, () => {
+          this.fadeIn()
+        })
       })
     }).catch(err => console.log(err))
   }
 
-  getCacheDir = async () => {
-    const cacheFolder = await FileSystem.getInfoAsync(CACHE_FOLDER);
-    if (cacheFolder.exists && cacheFolder.isDirectory) {
-      console.log("Caching folder found");
-      return cacheFolder
-    }else{
-      console.log("Folder does not found. Creating new one")
-      await FileSystem.makeDirectoryAsync(FileSystem.documentDirectory + 'image-cache/')
-    }
-    return await this.getCacheDir()
+
+  fadeIn = () =>{
+    Animated.timing(this.state.opacity, {
+      toValue: 1,
+      duration: 600,
+      useNativeDriver: true
+    }).start()  
   }
 
-  fetchB64 = (source) => {
-    return new Promise((resolve, reject) => {
-      fetch(source).then(resp=>{
-        var reader = new FileReader();
-        reader.readAsDataURL(resp._bodyBlob); 
-        reader.onloadend = function() {
-            base64data = reader.result;     
-          resolve(base64data)
-        }
-      }).catch(err => {
-        console.log(err)
-        reject()
-      })
-    });
+  fadeOut = (callback) =>{
+    Animated.timing(this.state.loaderOpactiy, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true
+    }).start(callback)
   }
 
-  guid = () => {
-    function s4() {
-      return Math.floor((1 + Math.random()) * 0x10000)
-        .toString(16)
-        .substring(1);
-    }
-    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-  }
-     
-  
 
   render() {
     const { style, placeholderStyle, loaderSize, loaderColor } = this.props
-    const { loaded, cachedb64  } = this.state
+    const { loaded, cachedb64, opacity, loaderOpactiy } = this.state
+    let animatedStyles = { opacity }
+    let animatedLoaderStyles = { opacity: loaderOpactiy }
     return loaded ? (
-     <Image
+     <Animated.Image
       source={{uri: cachedb64}}
-      style={style}
+      style={[style, animatedStyles]}
      />
     ) : (
-      <View style={[placeholderStyle, style]}>
+      <Animated.View style={[placeholderStyle, style, animatedLoaderStyles]}>
         <ActivityIndicator size={loaderSize} color={loaderColor}/>
-      </View>
+      </Animated.View>
     )
   }
 

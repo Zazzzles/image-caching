@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import CachedImage from './components/CachedImage'
 
@@ -50,8 +50,6 @@ export default class App extends React.Component {
             loaderSize="small"
           />
 
-          
-
         
       </View>
     );
@@ -64,7 +62,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     backgroundColor: '#fff',
-    //alignItems: 'center',
     justifyContent: 'center',
   },
   loader:{
