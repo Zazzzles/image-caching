@@ -7,6 +7,15 @@
 
 
 ```
+        import CachedImage from './components/CachedImage'
+        import CachedImageBg from './components/CachedImageBg'
+        import { clearImageCache } from './components/CacheManager'
+        
+        //Clearing the cache
+        componentDidMount(){
+           clearImageCache()
+        }
+
         <CachedImage
             source={"https://images.pexels.com/photos/1452219/pexels-photo-1452219.jpeg"}
             style={styles.image}
@@ -16,12 +25,13 @@
           />
 
         <CachedImageBg
-            source={"https://images.pexels.com/photos/1452219/pexels-photo-1452219.jpeg"}
+            source={"https://images.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg"}
             style={styles.image}
-            placeholderStyle={styles.placeholder}
+            placeholderStyle={styles.loader}
             loaderSize="small"
-            loaderColor="white"
-          />
+          >
+            <Text>Content</Text>
+         </CachedImageBg>
 ```
 
 ## Installation
