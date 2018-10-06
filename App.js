@@ -2,8 +2,13 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import CachedImage from './components/CachedImage'
+import { clearImageCache } from './components/CacheManager'
 
 export default class App extends React.Component {
+
+  componentDidMount(){
+    //clearImageCache()
+  }
   render() {
     return (
       <View style={styles.container}>
