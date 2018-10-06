@@ -4,6 +4,17 @@ import storage from '../helpers/AsyncLib'
 
 const CACHE_FOLDER = `${FileSystem.documentDirectory}image-cache`
 
+export function clearImageCache(){
+    storage.keys().then(item => {
+        storage.get(item).then(meta => {
+            meta.forEach(({uri}) =>{
+                Expo.FileSystem.deleteAsync(uri, {idempotent: true})
+            })
+            item.forEach(storage.remove)
+        })
+    })
+}
+
 export function storeImageMeta(source, uri){
     storage.set(source, {
         uri,

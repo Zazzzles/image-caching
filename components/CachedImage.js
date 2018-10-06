@@ -3,8 +3,7 @@ import { View, Image, ActivityIndicator, Animated } from 'react-native';
 import PropTypes from 'prop-types'
 import storage from '../helpers/AsyncLib'
 import { FileSystem } from 'expo'
-import CacheManger from '../components/CacheManager'
-
+import { guid, getCacheDir, fetchB64, storeImageMeta} from '../components/CacheManager'
 
 export default class CachedImage extends Component {
  
@@ -20,15 +19,13 @@ export default class CachedImage extends Component {
 
   componentWillMount = () =>{
     const { source } = this.props
-    //storage.remove(source)
     storage.get(source).then(res => res ? this.loadItem(res) : this.storeItem(source))
-   
   }
 
   storeItem = async (source) =>{
-    const dir = await CacheManger.getCacheDir()
-    const id = CacheManger.guid()
-    let b46 = await CacheManger.fetchB64(source)
+    const dir = await getCacheDir()
+    const id = guid()
+    let b46 = await fetchB64(source)
     FileSystem.writeAsStringAsync(dir.uri + id, b46).then((res) =>{
       this.fadeOut(() =>{
         this.setState({
@@ -36,7 +33,7 @@ export default class CachedImage extends Component {
           cachedb64: b46
         }, () => {
           this.fadeIn()
-          CacheManger.storeImageMeta(source, dir.uri + id)
+          storeImageMeta(source, dir.uri + id)
         })
       })
        
