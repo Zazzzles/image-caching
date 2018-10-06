@@ -37,8 +37,9 @@
 
 ## Usage
 
-> `clearImageCache` is used to remove all items from async storage and local FileSystem
-> `cleanCache` checks for images that are older than 30 days and removes them. It is reccommended to do this check often to avoid using too much storage space for caching
+> `CacheManager.clearImageCache()` is used to remove all items from async storage and local FileSystem
+
+> `CacheManager.cleanCache()` checks for images that are older than 30 days and removes them. It is reccommended to do this check often to avoid using too much storage space for caching
 
 ## Installation
 
