@@ -4,12 +4,12 @@ import { StyleSheet, View, Text } from 'react-native';
 import CachedImage from './components/CachedImage'
 import CachedImageBg from './components/CachedImageBg'
 
-import { clearImageCache } from './components/CacheManager'
+import { clearImageCache, cleanCache } from './components/CacheManager'
 
 export default class App extends React.Component {
 
   componentWillMount(){
-    //clearImageCache()
+    cleanCache()
   }
   render() {
     return (

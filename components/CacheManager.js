@@ -1,8 +1,8 @@
 import { FileSystem } from 'expo'
 import storage from '../helpers/AsyncLib'
 
-
 const CACHE_FOLDER = `${FileSystem.documentDirectory}image-cache`
+const TTL = 30
 
 export function clearImageCache(){
     storage.keys().then(item => {
@@ -11,6 +11,23 @@ export function clearImageCache(){
                 Expo.FileSystem.deleteAsync(uri, {idempotent: true})
             })
             item.forEach(storage.remove)
+        })
+    })
+}
+
+export function cleanCache(){
+    storage.keys().then(asyncItem => {
+        storage.get(asyncItem).then(meta => {
+            meta.forEach((item, index) =>{
+                const cachedDate = new Date(item.dateCreated)
+                const currentDate = new Date()
+                const timeDiff = Math.abs(currentDate.getTime() - cachedDate.getTime());
+                const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
+                if(TTL < diffDays){
+                    Expo.FileSystem.deleteAsync(item.uri, {idempotent: true})
+                    storage.remove(asyncItem[index])
+                }
+            })
         })
     })
 }
