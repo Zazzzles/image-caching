@@ -8,7 +8,7 @@ export function clearImageCache(){
     storage.keys().then(item => {
         storage.get(item).then(meta => {
             meta.forEach(({uri}) =>{
-                Expo.FileSystem.deleteAsync(uri, {idempotent: true})
+                FileSystem.deleteAsync(uri, {idempotent: true})
             })
             item.forEach(storage.remove)
         })
@@ -24,7 +24,7 @@ export function cleanCache(){
                 const timeDiff = Math.abs(currentDate.getTime() - cachedDate.getTime());
                 const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
                 if(TTL < diffDays){
-                    Expo.FileSystem.deleteAsync(item.uri, {idempotent: true})
+                    FileSystem.deleteAsync(item.uri, {idempotent: true})
                     storage.remove(asyncItem[index])
                 }
             })
