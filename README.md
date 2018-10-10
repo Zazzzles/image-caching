@@ -9,11 +9,12 @@
 ```
         import CachedImage from './components/CachedImage'
         import CachedImageBg from './components/CachedImageBg'
-        import { clearImageCache } from './components/CacheManager'
+        import { clearImageCache, cleanCache } from './components/CacheManager'
         
-        //Clearing the cache
+        
         componentDidMount(){
-           clearImageCache()
+           clearImageCache() //Clearing the cache
+           cleanCache() //Removing stale items from storage
         }
 
         <CachedImage
@@ -34,6 +35,12 @@
          </CachedImageBg>
 ```
 
+## Usage
+
+> `CacheManager.clearImageCache()` is used to remove all items from async storage and local FileSystem
+
+> `CacheManager.cleanCache()` checks for images that are older than 30 days and removes them. It is reccommended to do this check often to avoid using too much storage space for caching
+
 ## Installation
 
 >This project requires expo to run. You can get it [here](https://docs.expo.io/versions/latest/introduction/installation).
@@ -46,3 +53,10 @@
 or if you're using yarn
 
 `yarn start`
+
+## Pull Requests
+
+1. Fork it and create your feature branch: git checkout -b my-new-feature
+2. Commit your changes: git commit -am 'Add some feature'
+3. Push to the branch: git push origin my-new-feature 
+4. Submit a pull request
