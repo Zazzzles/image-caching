@@ -15,6 +15,7 @@ export default class CachedImage extends Component {
       opacity: new Animated.Value(0),
       loaderOpactiy: new Animated.Value(1)
     }
+    this.isMounted = true
   }
 
   componentWillMount = () =>{
@@ -22,19 +23,23 @@ export default class CachedImage extends Component {
     storage.get(source).then(res => res ? this.loadItem(res) : this.storeItem(source))
   }
 
+  componentWillUnmount = () => this.isMounted = false
+
   storeItem = async (source) =>{
     const dir = await getCacheDir()
     const id = guid()
     let b46 = await fetchB64(source)
     FileSystem.writeAsStringAsync(dir.uri + id, b46).then((res) =>{
       this.fadeOut(() =>{
-        this.setState({
-          loaded: true,
-          cachedb64: b46
-        }, () => {
-          this.fadeIn()
-          storeImageMeta(source, dir.uri + id)
-        })
+        if(this.isMounted){
+          this.setState({
+            loaded: true,
+            cachedb64: b46
+          }, () => {
+            this.fadeIn()
+            storeImageMeta(source, dir.uri + id)
+          })
+        }
       })
        
     }).catch(error => {
@@ -43,14 +48,16 @@ export default class CachedImage extends Component {
   }
 
   loadItem = async(meta) => {   
-    Expo.FileSystem.readAsStringAsync(meta.uri).then(resp => {
+    FileSystem.readAsStringAsync(meta.uri).then(resp => {
       this.fadeOut(() =>{
+       if(this.isMounted){
         this.setState({
           loaded: true,
           cachedb64: resp
         }, () => {
           this.fadeIn()
         })
+       }
       })
     }).catch(err => console.log(err))
   }
