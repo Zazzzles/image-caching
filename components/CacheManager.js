@@ -4,6 +4,11 @@ import storage from '../helpers/AsyncLib'
 const CACHE_FOLDER = `${FileSystem.documentDirectory}image-cache`
 const TTL = 30
 
+/**
+ * Clears all entries out of asyncstorage
+ * and filesystem.
+ */
+
 export function clearImageCache(){
     storage.keys().then(item => {
         storage.get(item).then(meta => {
@@ -14,6 +19,13 @@ export function clearImageCache(){
         })
     })
 }
+
+/**
+ * Checks asyncstorage for items older
+ * than specified TTL and removes them.
+ * This check needs to happen at least
+ * once per flow.
+ */
 
 export function cleanCache(){
     storage.keys().then(asyncItem => {
@@ -32,12 +44,24 @@ export function cleanCache(){
     })
 }
 
+/**
+ * Stores image meta data.
+ * @param {String} source for storage key and reference to stored file
+ * @param {String} uri that points to FileSystem location 
+ */
+
 export function storeImageMeta(source, uri){
     storage.set(source, {
         uri,
         dateCreated: new Date()
       })
 }
+
+/**
+ * Checks is cache folder exists
+ * and creates one if not found.
+ * @returns {Promise} resolves to cache directory string
+ */
 
 export async function getCacheDir(){
     const cacheFolder = await FileSystem.getInfoAsync(CACHE_FOLDER);
@@ -50,6 +74,13 @@ export async function getCacheDir(){
     }
     return await this.getCacheDir()
 }
+
+/**
+ * Fetch image from remote source
+ * and convert to b64.
+ * @param {String} source for image URL
+ * @returns {Promise} resolves to b64 string
+ */
 
 export function fetchB64(source){
     return new Promise((resolve, reject) => {
@@ -66,6 +97,12 @@ export function fetchB64(source){
         })
       });
 }
+
+/**
+ * Generates UUID
+ * @returns {String} UUID
+ */
+
 
 export function guid(){
     function s4() {
