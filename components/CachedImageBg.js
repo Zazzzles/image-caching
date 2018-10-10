@@ -59,8 +59,6 @@ export default class CachedImageBg extends Component {
   }
 
 
-
-
   fadeOut = (callback) =>{
     Animated.timing(this.state.loaderOpactiy, {
       toValue: 0,
