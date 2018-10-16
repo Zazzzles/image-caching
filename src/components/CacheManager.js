@@ -11,11 +11,11 @@ const TTL = 30
 
 export function clearImageCache () {
   storage.keys().then(item => {
-    storage.get(item).then(meta => {
-      meta.forEach(({ uri }) => {
-        FileSystem.deleteAsync(uri, { idempotent: true })
-      })
-      item.forEach(storage.remove)
+    FileSystem.deleteAsync(CACHE_FOLDER, { idempotent: true })
+    item.forEach(item =>{
+      if(item.includes("images")){
+        storage.remove(item)
+      }
     })
   })
 }
@@ -60,17 +60,21 @@ export function storeImageMeta (source, uri) {
 /**
  * Checks is cache folder exists
  * and creates one if not found.
- * @returns {Promise} resolves to cache directory string
  */
 
-export async function getCacheDir () {
+export async function createCacheDir (){
   const cacheFolder = await FileSystem.getInfoAsync(CACHE_FOLDER)
-  if (cacheFolder.exists && cacheFolder.isDirectory) {
-    return cacheFolder
-  } else {
-    await FileSystem.makeDirectoryAsync(FileSystem.documentDirectory + 'image-cache/')
-  }
-  return getCacheDir()
+  return !cacheFolder.exists && FileSystem.makeDirectoryAsync(CACHE_FOLDER)
+}
+
+/**
+ * Checks is cache folder exists
+ * and creates one if not found.
+ * @returns {String} URI of cache directory folder
+ */
+
+export function getCacheDir () {
+  return CACHE_FOLDER
 }
 
 /**

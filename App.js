@@ -1,11 +1,13 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 
-import { clearImages, clean, Image, ImageBg } from './src'
+import { clearImages, createCacheDir, clean, Image, ImageBg } from './src'
 
 export default class App extends React.Component {
 
-  componentWillMount(){
+  componentWillMount = async() =>{
+   // clearImages()
+    await createCacheDir()
     clean()
   }
 

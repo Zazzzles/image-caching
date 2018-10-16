@@ -26,17 +26,17 @@ export default class ImageBg extends Component {
   componentWillUnmount = () => (this.mounted = false)
 
   storeItem = async (source) => {
-    const dir = await getCacheDir()
+    const dir = getCacheDir()
     const id = guid()
     let b46 = await fetchB64(source)
-    FileSystem.writeAsStringAsync(dir.uri + id, b46).then((res) => {
+    FileSystem.writeAsStringAsync(dir + id, b46).then((res) => {
       this.fadeOut(() => {
         if (this.mounted) {
           this.setState({
             loaded: true,
             cachedb64: b46
           }, () => {
-            storeImageMeta(source, dir.uri + id)
+            storeImageMeta(source, dir + id)
           })
         }
       })
