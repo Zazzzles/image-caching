@@ -1,21 +1,18 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 
-import CachedImage from './components/CachedImage'
-import CachedImageBg from './components/CachedImageBg'
-
-import { clearImageCache, cleanCache } from './components/CacheManager'
+import { clearImages, clean, Image, ImageBg } from './src'
 
 export default class App extends React.Component {
 
   componentWillMount(){
-    cleanCache()
+    clean()
   }
 
   render() {
     return (
 
-          <CachedImageBg
+          <ImageBg
             source={"https://images.pexels.com/photos/531880/pexels-photo-531880.jpeg"}
             style={styles.container}
             placeholderStyle={styles.container}
@@ -23,7 +20,7 @@ export default class App extends React.Component {
             loaderColor="lightgrey"
           >
            
-           <CachedImage
+           <Image
             source={"https://images.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg"}
             style={styles.image}
             placeholderStyle={styles.loader}
@@ -31,7 +28,7 @@ export default class App extends React.Component {
             loaderColor="white"
           />
 
-           <CachedImage
+           <Image
             source={"https://images.pexels.com/photos/1452219/pexels-photo-1452219.jpeg"}
             style={styles.image}
             placeholderStyle={styles.loader}
@@ -39,7 +36,7 @@ export default class App extends React.Component {
             loaderColor="white"
           />
 
-          <CachedImage
+          <Image
             source={"https://images.pexels.com/photos/1461663/pexels-photo-1461663.jpeg"}
             style={styles.image}
             placeholderStyle={styles.loader}
@@ -47,7 +44,7 @@ export default class App extends React.Component {
             loaderColor="white"
           />
 
-          <CachedImage
+          <Image
             source={"https://images.pexels.com/photos/1279344/pexels-photo-1279344.jpeg"}
             style={styles.image}
             placeholderStyle={styles.loader}
@@ -55,7 +52,7 @@ export default class App extends React.Component {
             loaderColor="white"
           />
 
-          <CachedImage
+          <Image
             source={"https://images.pexels.com/photos/885880/pexels-photo-885880.jpeg"}
             style={styles.image}
             placeholderStyle={styles.loader}
@@ -63,7 +60,7 @@ export default class App extends React.Component {
             loaderColor="white"
           />
 
-           <CachedImage
+           <Image
             source={"https://images.pexels.com/photos/1450013/pexels-photo-1450013.jpeg"}
             style={styles.image}
             placeholderStyle={styles.loader}
@@ -71,7 +68,7 @@ export default class App extends React.Component {
             loaderColor="white"
           />
           
-          </CachedImageBg>
+          </ImageBg>
 
     );
   }

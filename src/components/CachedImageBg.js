@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import { View, ImageBackground, ActivityIndicator, Animated } from 'react-native';
+import React, { Component } from 'react'
+import { View, ImageBackground, ActivityIndicator, Animated, Text } from 'react-native'
 import PropTypes from 'prop-types'
 import storage from '../helpers/AsyncLib'
 import { FileSystem } from 'expo'
-import { guid, getCacheDir, fetchB64, storeImageMeta} from '../components/CacheManager'
+import { guid, getCacheDir, fetchB64, storeImageMeta } from './CacheManager'
 
-export default class CachedImageBg extends Component {
+export default class ImageBg extends Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -20,7 +20,7 @@ export default class CachedImageBg extends Component {
 
   componentWillMount = () => {
     const { source } = this.props
-    source ? storage.get(source).then(res => res ? this.loadItem(res) : this.storeItem(source)) : this.setState({hasError: true})
+    source ? storage.get(source).then(res => res ? this.loadItem(res) : this.storeItem(source)) : this.setState({ hasError: true })
   }
 
   componentWillUnmount = () => (this.mounted = false)
@@ -67,7 +67,7 @@ export default class CachedImageBg extends Component {
   }
 
   render () {
-    const { style, placeholderStyle, loaderSize, loaderColor } = this.props
+    const { style } = this.props
     const { loaded, cachedb64, loaderOpactiy } = this.state
     let animatedLoaderStyles = { opacity: loaderOpactiy }
     return loaded ? (
@@ -80,25 +80,23 @@ export default class CachedImageBg extends Component {
     ) : this.handleLoading(animatedLoaderStyles)
   }
 
-  handleLoading = (loaderStyles) =>{
+  handleLoading = (loaderStyles) => {
     const { style, placeholderStyle, loaderSize, loaderColor, errorTextStyle } = this.props
 
     return this.state.hasError ? (
       <View style={[placeholderStyle, style]}>
         <Text style={[errorTextStyle]}>No image found</Text>
       </View>
-    ) : 
-    (
-      <Animated.View style={[placeholderStyle, style, loaderStyles]}>
-        <ActivityIndicator size={loaderSize} color={loaderColor} />
-      </Animated.View>
     )
-    
+      : (
+        <Animated.View style={[placeholderStyle, style, loaderStyles]}>
+          <ActivityIndicator size={loaderSize} color={loaderColor} />
+        </Animated.View>
+      )
   }
-
 }
 
-CachedImageBg.defaultProps = {
+ImageBg.defaultProps = {
   source: '',
   style: {},
   placeholderStyle: {},
@@ -106,7 +104,7 @@ CachedImageBg.defaultProps = {
   loaderColor: 'black'
 }
 
-CachedImageBg.propTypes = {
+ImageBg.propTypes = {
   source: PropTypes.string.isRequired,
   loaderSize: PropTypes.oneOf(['large', 'small']),
   loaderColor: PropTypes.string
