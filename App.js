@@ -11,6 +11,7 @@ export default class App extends React.Component {
   componentWillMount(){
     cleanCache()
   }
+
   render() {
     return (
 
@@ -19,7 +20,7 @@ export default class App extends React.Component {
             style={styles.container}
             placeholderStyle={styles.container}
             loaderSize="large"
-            loaderColor="white"
+            loaderColor="lightgrey"
           >
            
            <CachedImage
