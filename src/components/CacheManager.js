@@ -1,23 +1,24 @@
 import { FileSystem } from 'expo'
 import storage from '../helpers/AsyncLib'
-
-const CACHE_FOLDER = `${FileSystem.documentDirectory}image-cache`
-const TTL = 30
+import { CACHE_FOLDER, CACHE_KEY, TTL } from '../helpers/constants'
 
 /**
  * Clears all entries out of asyncstorage
  * and filesystem.
  */
 
-export function clearImageCache () {
-  storage.keys().then(item => {
-    FileSystem.deleteAsync(CACHE_FOLDER, { idempotent: true })
-    item.forEach(item =>{
-      if(item.includes("images")){
-        storage.remove(item)
-      }
-    })
+export async function clearImageCache () {
+  await FileSystem.deleteAsync(CACHE_FOLDER, { idempotent: true })
+  const items = await storage.keys()
+  const removedItemPromises = items.map(item => {
+    if (item.includes(CACHE_KEY)) {
+      return storage.remove(item)
+    }
+
+    return Promise.resolve()
   })
+
+  await Promise.all(removedItemPromises)
 }
 
 /**
@@ -26,22 +27,26 @@ export function clearImageCache () {
  * This check needs to happen at least
  * once per flow.
  */
+export async function cleanCache (days = TTL) {
+  const keys = await storage.keys()
+  const meta = await storage.get(keys)
+  await Promise.all(meta.map(async (item, index) => {
+    const diffDays = getTimeDiff(item.dateCreated)
+    if (days < diffDays) {
+      await FileSystem.deleteAsync(item.uri, { idempotent: true })
+      await storage.remove(keys[index])
+      return
+    }
 
-export function cleanCache () {
-  storage.keys().then(asyncItem => {
-    storage.get(asyncItem).then(meta => {
-      meta.forEach((item, index) => {
-        const cachedDate = new Date(item.dateCreated)
-        const currentDate = new Date()
-        const timeDiff = Math.abs(currentDate.getTime() - cachedDate.getTime())
-        const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24))
-        if (TTL < diffDays) {
-          FileSystem.deleteAsync(item.uri, { idempotent: true })
-          storage.remove(asyncItem[index])
-        }
-      })
-    })
-  })
+    return Promise.resolve()
+  }))
+}
+
+function getTimeDiff (dateCreated) {
+  const cachedDate = new Date(dateCreated)
+  const currentDate = new Date()
+  const timeDiff = Math.abs(currentDate.getTime() - cachedDate.getTime())
+  return Math.ceil(timeDiff / (1000 * 3600 * 24))
 }
 
 /**
@@ -51,7 +56,9 @@ export function cleanCache () {
  */
 
 export function storeImageMeta (source, uri) {
-  storage.set(source, {
+  const key = `${CACHE_KEY}${source}`
+  storage.set(key, {
+    source,
     uri,
     dateCreated: new Date()
   })
@@ -62,7 +69,7 @@ export function storeImageMeta (source, uri) {
  * and creates one if not found.
  */
 
-export async function createCacheDir (){
+export async function createCacheDir () {
   const cacheFolder = await FileSystem.getInfoAsync(CACHE_FOLDER)
   return !cacheFolder.exists && FileSystem.makeDirectoryAsync(CACHE_FOLDER)
 }
@@ -94,7 +101,7 @@ export function fetchB64 (source) {
         resolve(base64data)
       }
     }).catch(err => {
-      console.log(err)
+      console.log('helllooo darnkess', err)
       reject(err)
     })
   })
