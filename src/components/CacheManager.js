@@ -1,6 +1,6 @@
 import { FileSystem } from 'expo'
 import storage from '../helpers/AsyncLib'
-import {CACHE_FOLDER, CACHE_KEY, TTL} from '../helpers/constants'
+import { CACHE_FOLDER, CACHE_KEY, TTL } from '../helpers/constants'
 
 /**
  * Clears all entries out of asyncstorage
@@ -9,14 +9,14 @@ import {CACHE_FOLDER, CACHE_KEY, TTL} from '../helpers/constants'
 
 export async function clearImageCache () {
   await FileSystem.deleteAsync(CACHE_FOLDER, { idempotent: true })
-  const items = await  storage.keys()
-  const removedItemPromises = items.map(item =>{
-      if(item.includes(CACHE_KEY)){
-        return storage.remove(item)
-      }
+  const items = await storage.keys()
+  const removedItemPromises = items.map(item => {
+    if (item.includes(CACHE_KEY)) {
+      return storage.remove(item)
+    }
 
-      return Promise.resolve()
-    })
+    return Promise.resolve()
+  })
 
   await Promise.all(removedItemPromises)
 }
@@ -34,15 +34,15 @@ export async function cleanCache (days = TTL) {
     const diffDays = getTimeDiff(item.dateCreated)
     if (days < diffDays) {
       await FileSystem.deleteAsync(item.uri, { idempotent: true })
-      await storage.remove(key[index])
-      return 
+      await storage.remove(keys[index])
+      return
     }
 
     return Promise.resolve()
-  })) 
+  }))
 }
 
-function getTimeDiff(dateCreated) {
+function getTimeDiff (dateCreated) {
   const cachedDate = new Date(dateCreated)
   const currentDate = new Date()
   const timeDiff = Math.abs(currentDate.getTime() - cachedDate.getTime())
@@ -58,7 +58,7 @@ function getTimeDiff(dateCreated) {
 export function storeImageMeta (source, uri) {
   const key = `${CACHE_KEY}${source}`
   storage.set(key, {
-    soure,
+    source,
     uri,
     dateCreated: new Date()
   })
@@ -69,7 +69,7 @@ export function storeImageMeta (source, uri) {
  * and creates one if not found.
  */
 
-export async function createCacheDir (){
+export async function createCacheDir () {
   const cacheFolder = await FileSystem.getInfoAsync(CACHE_FOLDER)
   return !cacheFolder.exists && FileSystem.makeDirectoryAsync(CACHE_FOLDER)
 }
