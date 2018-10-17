@@ -44,7 +44,7 @@
 
 > `CacheManager.cleanCache()` checks for images that are older than specified TTL days and removes them. It is reccommended to do this check often to avoid using too much storage space for caching
 
-> `CacheManager.createCacheDir` (Promise) checks if the caching directory exists on the filesystem and creates one if not
+> `CacheManager.createCacheDir(TTL)` checks if the caching directory exists on the filesystem and creates one if not
 
 ## Installation
 
