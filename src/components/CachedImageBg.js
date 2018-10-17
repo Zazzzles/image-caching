@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import storage from '../helpers/AsyncLib'
 import { FileSystem } from 'expo'
 import { guid, getCacheDir, fetchB64, storeImageMeta } from './CacheManager'
+import { CACHE_KEY } from '../helpers/constants'
 
 export default class ImageBg extends Component {
   constructor (props) {
@@ -20,7 +21,8 @@ export default class ImageBg extends Component {
 
   componentWillMount = () => {
     const { source } = this.props
-    source ? storage.get(source).then(res => res ? this.loadItem(res) : this.storeItem(source)) : this.setState({ hasError: true })
+    const key = `${CACHE_KEY}${source}`
+    source ? storage.get(key).then(res => res ? this.loadItem(res) : this.storeItem(source)) : this.setState({ hasError: true })
   }
 
   componentWillUnmount = () => (this.mounted = false)

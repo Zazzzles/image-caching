@@ -45,21 +45,6 @@ function set (key, value) {
 }
 
 /**
- * Update key with value by merging.
- * Wrapper around mergeItem & multiMerge.
- * @param {String, Array} key for value
- * @param {any} value to update
- * @returns {Promise}
- */
-function update (key, value) {
-  if (Array.isArray(key)) {
-    return AsyncStorage.multiMerge(key.map(([key, val]) => [key, JSON.stringify(val)]))
-  }
-
-  return AsyncStorage.mergeItem(key, JSON.stringify(value))
-}
-
-/**
  * Remove a key from AsyncStorage.
  * Wrapper around removeItem & multiRemove.
  * @param {String, Array} key to remove
@@ -77,14 +62,6 @@ function remove (key) {
 }
 
 /**
- * Erase all AsyncStorage data.
- * @returns {Promise}
- */
-function clear () {
-  return AsyncStorage.clear()
-}
-
-/**
  * Retreive all the keys stored in AsyncStorage of application.
  * Wrapper around getAllKeys
  * @returns {Promise}
@@ -96,7 +73,5 @@ function keys () {
 export default {
   get,
   set,
-  update,
   remove,
-  clear,
   keys }
