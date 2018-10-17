@@ -2,6 +2,8 @@
 
 > A  nifty wrapper for `Image` and `ImageBackround` used for caching remote images to prevent unnecessary network requests.
 
+![Example](https://media.giphy.com/media/4ZqfhgH3OS8rgwKaEo/giphy.gif)
+
 ## Code Samples
 
 
@@ -9,12 +11,13 @@
 ```
         import CachedImage from './components/CachedImage'
         import CachedImageBg from './components/CachedImageBg'
-        import { clearImageCache, cleanCache } from './components/CacheManager'
+        import { clearImageCache, cleanCache, createCacheDir } from './components/CacheManager'
         
         
         componentDidMount(){
+           await createCacheDir() //Check if caching directory exists and create one if not
            clearImageCache() //Clearing the cache
-           cleanCache() //Removing stale items from storage
+           cleanCache(30) //Removing stale items from storage with specified period in days
         }
 
         <CachedImage
